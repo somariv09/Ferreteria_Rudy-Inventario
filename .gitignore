@@ -1,0 +1,49 @@
+# ==================================
+# ENTORNOS VIRTUALES
+# ==================================
+venv/
+.venv/
+env/
+ENV/
+
+# ==================================
+# VARIABLES DE ENTORNO Y SECRETOS
+# ==================================
+.env
+.env.*
+!.env.example
+
+# ==================================
+# ARCHIVOS TEMPORALES DE PYTHON
+# ==================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==================================
+# ARCHIVOS DE DJANGO
+# ==================================
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+
+# ==================================
+# CACHES Y PRUEBAS
+# ==================================
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# ==================================
+# EDITORES
+# ==================================
+.vscode/
+.idea/
+
+# ==================================
+# SISTEMA OPERATIVO
+# ==================================
+.DS_Store
+Thumbs.db

@@ -1,0 +1,213 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de movimientos - Ferretería Rudy</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body class="pagina">
+
+    <header class="parte-superior">
+        <div class="contenido-superior">
+            <a href="{% url 'dashboard' %}" class="marca-ferreteria text-decoration-none text-white">
+                <i class="bi bi-tools"></i>
+                <span>FERRETERÍA RUDY</span>
+            </a>
+
+            <div class="usuario-sesion">
+                <i class="bi bi-person-circle"></i>
+                <span>{{ request.user.nombre }}</span>
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="cerrar-sesion" title="Cerrar Sesión" aria-label="Cerrar sesión">
+                        <i class="bi bi-box-arrow-right" ></i></button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main class="contenedor-principal">
+
+        <h1 class="titulo-principal">Historial de movimientos</h1>
+        <p class="descripcion-principal">
+            Entradas y salidas registradas en el inventario.
+        </p>
+
+        <form method="get" action="{% url 'historial' %}">
+            <section class="filtros-movimientos">
+
+                <div class="campo-filtro">
+                    <label for="buscarProducto" class="form-label">Buscar producto</label>
+                    <input type="search" id="buscarProducto" name="buscar"
+                           class="form-control"
+                           placeholder="Nombre o código del producto"
+                           value="{{ filtros.buscar }}">
+                </div>
+
+                <div class="campo-filtro">
+                    <label for="tipoMovimiento" class="form-label">Tipo de movimiento</label>
+                    <select id="tipoMovimiento" name="tipo" class="form-select">
+                        <option value="todos" {% if filtros.tipo == 'todos' %}selected{% endif %}>
+                            Todos los movimientos
+                        </option>
+                        <option value="ENTRADA" {% if filtros.tipo == 'ENTRADA' %}selected{% endif %}>
+                            Entradas
+                        </option>
+                        <option value="SALIDA" {% if filtros.tipo == 'SALIDA' %}selected{% endif %}>
+                            Salidas
+                        </option>
+                    </select>
+                </div>
+
+                <div class="campo-filtro">
+                    <label for="fechaDesde" class="form-label">Desde</label>
+                    <input type="date" id="fechaDesde" name="desde"
+                           class="form-control" value="{{ filtros.desde }}">
+                </div>
+
+                <div class="campo-filtro">
+                    <label for="fechaHasta" class="form-label">Hasta</label>
+                    <input type="date" id="fechaHasta" name="hasta"
+                           class="form-control" value="{{ filtros.hasta }}">
+                </div>
+
+                <div class="campo-filtro d-flex align-items-end">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+
+            </section>
+        </form>
+
+        <section class="seccion-dashboard">
+            <div class="encabezado-historial">
+                <h2>Movimientos registrados</h2>
+            </div>
+
+            <div class="tabla-contenedor">
+                <table class="table tabla-movimientos align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Fecha y hora</th>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Tipo</th>
+                            <th>Cantidad</th>
+                            <th>Usuario</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for movimiento in movimientos %}
+                        <tr>
+                            <td>{{ movimiento.fecha|date:"d/m/Y H:i" }}</td>
+                            <td>{{ movimiento.producto.codigo_producto }}</td>
+                            <td>{{ movimiento.producto.nombre }}</td>
+                            <td>
+                                {% if movimiento.tipo_movimiento == 'ENTRADA' %}
+                                    <span class="etiqueta-entrada">Entrada</span>
+                                {% else %}
+                                    <span class="etiqueta-salida">Salida</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ movimiento.cantidad }} unidades</td>
+                            <td>{{ movimiento.usuario.nombre }}</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'editar_movimiento' movimiento.id_movimiento %}"
+                                       class="btn btn-sm btn-outline-success"
+                                       title="Editar movimiento">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <button type="button"
+                                        class="btn btn-outline-danger btn-sm flex-fill"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalEliminar{{ movimiento.id_movimiento }}">
+                                    <i class="bi bi-trash"></i>
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Ventana emergente para confirmar eliminación -->
+                        <div class="modal fade"
+                            id="modalEliminar{{movimiento.id_movimiento }}"
+                            tabindex="-1"
+                            aria-labelledby="tituloEliminar{{ movimiento.id_movimiento }}"
+                            aria-hidden="true">
+
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"
+                                            id="tituloEliminar{{ movimiento.id_movimiento }}">
+                                            Eliminar producto
+                                        </h5>
+
+                                        <button type="button" class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Cerrar"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        ¿Estás seguro de que deseas eliminar
+                                        <strong>{{ movimiento.codigo }}</strong>?
+
+                                        <p class="text-secondary small mt-2 mb-0">
+                                            Esta acción no se puede deshacer.
+                                        </p>
+                                    </div>
+
+                                    <div class="modal-footer">
+
+                                        <button type="button"
+                                                class="btn btn-secondary"
+                                                data-bs-dismiss="modal">
+                                            Cancelar
+                                        </button>
+
+                                        <form method="post"
+                                            action="{% url 'eliminarMovimiento' movimiento.id_movimiento %}">
+                                            {% csrf_token %}
+
+                                            <button type="submit" class="btn btn-danger">
+                                                Sí, eliminar
+                                            </button>
+                                        </form>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                No hay movimientos registrados.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <a href="{% url 'dashboard' %}" class="enlace-historial">
+                <i class="bi bi-arrow-left"></i>
+                Volver al dashboard
+            </a>
+        </section>
+    </main>
+
+</body>
+</html>
