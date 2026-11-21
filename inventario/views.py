@@ -11,6 +11,7 @@ from django.core.files.storage import FileSystemStorage
 from django.db import transaction
 from django.utils import timezone
 import time
+from django.db import models
 
 from decimal import Decimal, InvalidOperation
 from django.db.models import Q, F
@@ -89,7 +90,30 @@ def logout(request):
 
 @login_required
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    # Obtener productos activos
+    productos = Producto.objects.filter(activo=True)
+
+    # Contar productos registrados
+    total_productos = productos.count()
+
+    # Contar productos con alerta de stock
+    alertas_stock = productos.filter(
+        cantidad__lte=models.F('stock_minimo')
+    ).count()
+
+    # Obtener los últimos 4 movimientos
+    movimientos_recientes = Movimiento.objects.order_by(
+        '-fecha', '-pk'
+    )[:4]
+
+    contexto = {
+        'total_productos': total_productos,
+        'alertas_stock': alertas_stock,
+        'movimientos_recientes': movimientos_recientes,
+        'productos_inventario': productos,
+    }
+
+    return render(request, 'dashboard.html', contexto)
 
 @login_required
 def registroEntrada(request):
