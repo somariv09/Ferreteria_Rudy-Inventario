@@ -64,7 +64,7 @@
 
                     {% if producto.imagen %}
                         <div class="mb-2">
-                            <img src="{{ producto.imagen }}"
+                            <img src="{% get_media_prefix %}{{ producto.imagen }}"
                                  alt="{{ producto.nombre }}"
                                  style="max-width: 150px; max-height: 150px;">
                         </div>
@@ -77,7 +77,7 @@
                 <div class="mb-3">
                     <label for="codigo" class="form-label">Código del producto</label>
 
-                    <input type="text" id="codigo" name="codigo_producto"
+                    <input type="text" id="codigo" name="codigo"
                            class="form-control"
                            value="{{ producto.codigo_producto }}"
                            maxlength="20" required>
@@ -127,7 +127,7 @@
                 <div class="mb-3">
                     <label for="precio" class="form-label">Precio unitario</label>
 
-                    <input type="number" id="precio" name="precio_unitario"
+                    <input type="number" id="precio" name="precio"
                            class="form-control"
                            value="{{ producto.precio_unitario }}"
                            min="0.01" step="0.01" required>
@@ -136,7 +136,7 @@
                 <div class="mb-3">
                     <label for="stockMinimo" class="form-label">Stock mínimo</label>
 
-                    <input type="number" id="stockMinimo" name="stock_minimo"
+                    <input type="number" id="stockMinimo" name="stockMinimo"
                            class="form-control"
                            value="{{ producto.stock_minimo }}"
                            min="0" required>

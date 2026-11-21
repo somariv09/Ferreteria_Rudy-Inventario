@@ -6,6 +6,8 @@ urlpatterns=[
 
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
+    # Verificación de identidad para reactivar registros
+    path('verificar-reactivacion/',views.login, {'modo': 'reactivacion'}, name='verificarReactivacion'),
 
     path('productos/', views.catalogoProducto, name='catalogoProducto'),
     path('producto/agregar/', views.agregarProducto, name='agregarProducto'),
@@ -22,5 +24,9 @@ urlpatterns=[
     path('salida/', views.registroSalida, name='registroSalida'),
     path('movimiento/editar/<int:id_movimiento>/', views.editarMovimiento, name='editarMovimiento'),
     path('movimiento/eliminar/<int:id_movimiento>/', views.eliminarMovimiento, name='eliminarMovimiento'),
+
+    path('registros-inactivos/', views.registrosInactivos,name='registrosInactivos'),
+    path('reactivar-producto/<int:id_producto>/', views.reactivarProducto,name='reactivarProducto'),
+    path('reactivar-categoria/<int:id_categoria>/',views.reactivarCategoria, name='reactivarCategoria'),
 
 ]

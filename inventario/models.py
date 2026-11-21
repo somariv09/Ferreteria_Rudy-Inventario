@@ -21,6 +21,8 @@ class Categoria(models.Model):
         blank=True
     )
 
+    activo = models.BooleanField(default=True)
+
     class Meta:
         db_table = 'categoria'
         managed = False
@@ -54,6 +56,8 @@ class Producto(models.Model):
     )
 
     stock_minimo = models.IntegerField(default=0)
+
+    activo = models.BooleanField(default=True)
 
     imagen = models.CharField(
         max_length=255,

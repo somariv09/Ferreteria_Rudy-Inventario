@@ -64,7 +64,7 @@
 
                     {% if categoria.imagen %}
                         <div class="mb-2">
-                            <img src="{{ categoria.imagen }}"
+                            <img src="{% get_media_prefix %}{{ categoria.imagen }}"
                                  alt="{{ categoria.nombre }}"
                                  style="max-width: 150px; max-height: 150px;">
                         </div>
@@ -97,7 +97,7 @@
 
                 <div class="d-flex justify-content-end gap-2">
 
-                    <a href="{% url 'catalogoCategorias' %}"
+                    <a href="{% url 'catalogoCategoria' %}"
                        class="btn btn-secondary">
                         Cancelar
                     </a>
